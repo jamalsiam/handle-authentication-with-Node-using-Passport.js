@@ -8,6 +8,8 @@ const jwt = require('../../../common/jwt');
 const redis = require('../../../common/redis');
 
 
+
+
 router.post('/login', (req, res, next) => {
     const { email, password } = req.body;
 
@@ -91,6 +93,25 @@ router.post('/token', refreshToken, (req, res) => {
     redis.setRedisRecord(userId, response)
     return res.json({ ...response });
 
-})
+});
+
+router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
+
+router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }),
+(req, res) => {
+    res.redirect('/');
+});
+
+
+
+router.get('/google', passport.authenticate('google', { scope: 'https://www.googleapis.com/auth/plus.login' }));
+
+
+router.get('/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    (req, res) => {
+        res.redirect('/');
+    });
+
 
 module.exports = router;
