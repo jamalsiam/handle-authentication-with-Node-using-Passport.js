@@ -51,7 +51,7 @@ router.post('/login', (req, res, next) => {
 });
 
 router.post('/signup', (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password } = req.body.data;
 
     if (username && email && password) {
 
@@ -74,13 +74,16 @@ router.post('/signup', (req, res) => {
 
             })
             .catch(err => {
-                return res.status(409).json({ errors: { type: 'User Already Exists' } })
+                return res.status(409).json({ email: 'User Already Exists' })
             })
 
     } else {
-        return res.status(422).json({ errors: { type: 'Fill All Input' } })
+        return res.status(422).json({ type: 'Fill All Input' })
     }
 })
+
+
+
 router.post('/token', refreshToken, (req, res) => {
     const { userId } = req;
     const { exp, token } = jwt.sign(userId);
@@ -98,9 +101,9 @@ router.post('/token', refreshToken, (req, res) => {
 router.get('/facebook', passport.authenticate('facebook', { scope: ['email'] }));
 
 router.get('/facebook/callback', passport.authenticate('facebook', { failureRedirect: '/login' }),
-(req, res) => {
-    res.redirect('/');
-});
+    (req, res) => {
+        res.redirect('/');
+    });
 
 
 
